@@ -1,1 +1,1 @@
-# cood-api
+# node-cood-api
