@@ -1,0 +1,32 @@
+{
+  "name": "node-cood-api",
+  "version": "0.0.1",
+  "description": "Node module for COOD API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kevinblade/node-cood-api"
+  },
+  "keywords": [
+    "cood",
+    "api",
+    "node",
+    "module"
+  ],
+  "author": "Kevin Cho",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kevinblade/node-cood-api/issues"
+  },
+	"scripts": {
+		  "test": "make test"
+	},
+  "homepage": "https://github.com/kevinblade/node-cood-api",
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "mocha": "^2.2.5"
+  }
+}
