@@ -1,7 +1,7 @@
 Node-COOD-API
 =========
 
-A Node library providing to access to the COOD service.
+A Node library providing to access to the COOD API service.
 
 ## Installation
 
@@ -11,7 +11,7 @@ npm install node-cood-api --save
 
 var api = require('node-cood-api');
 
-# get OAuth2 token to authotized access to the COOD service
+# get an OAuth2 token for authotized access to the COOD API service
 var token = api.getToken();
 
 console.log('OAuth2 Token: ', token);
