@@ -1,7 +1,7 @@
 Node-COOD-API
 =========
 
-A Node library providing to access to the COOD API service.
+A Node library providing to access for the COOD API service.
 
 ## Installation
 ```
