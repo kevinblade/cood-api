@@ -9,12 +9,33 @@ npm install node-cood-api --save
 
 ## Usage
 
-var api = require('node-cood-api');
+var service = new Service({
+		apiUrl: "http://coddr-v1-dev.coddr.biz:3000",
+		webUrl: "http://coddr-v1-dev.coddr.biz:4000"
+	});
 
 # get an OAuth2 token for authotized access to the COOD API service
-var token = api.getToken();
+service.OAuth2.getToken({
+        clientId: "f30013...",
+        clientSecret: "f6578..."
+    }).done(function(data, response) {
+        var data = JSON.parse(data);
+        console.log("access_token = " + data.access_token);
+    });
 
-console.log('OAuth2 Token: ', token);
+# sign-in into the COOD Service
+service.User.signIn({
+        email: "kwangje2015@gmail.com",
+		password: "Wnl!@#1231",
+		device: {
+		    key: 'c8:2a:99:99:99:99',           // MAC address
+			token: '5576....',	                // Team Member's ID
+			platform: 'desktop'					// Application Platform
+		}
+	}).done(function(data, response) {
+	    var data = JSON.parse(data);
+	    console.log("user's email => " + data.email);
+	});
 
 ## Tests
 
