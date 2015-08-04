@@ -149,7 +149,69 @@ module.exports = {
 						}); // client.on('error')
 						
 					return df.promise;
-				} // signIn
+				}, // signIn()
+				
+				checkExistEmail: function(opts) {
+					var self = this,
+						args = {
+							data: {
+								api_user: {
+									email: opts.email
+								}
+							}
+						}; // args
+						
+					var df = deferred();
+					
+					client.post(apiOpts.apiUrl + '/api/users/check_exist_email.json', args,
+						function(data, response) {
+						    data = JSON.parse(data);
+
+							if (data.success) {
+								df.resolve(data);
+							} else {
+								df.reject(data);
+							}
+						}); // client.post()
+					
+					client.on('error',
+						function(err) {
+						    df.reject(err);
+						}); // client.on('error')
+						
+					return df.promise;
+				}, // checkExistEmail()
+				
+				checkExistNickname: function(opts) {
+					var self = this,
+						args = {
+							data: {
+								api_user: {
+									nickname: opts.nickname
+								}
+							}
+						}; // args
+						
+					var df = deferred();
+					
+					client.post(apiOpts.apiUrl + '/api/users/check_exist_nickname.json', args,
+						function(data, response) {
+						    data = JSON.parse(data);
+
+							if (data.success) {
+								df.resolve(data);
+							} else {
+								df.reject(data);
+							}
+						}); // client.post()
+					
+					client.on('error',
+						function(err) {
+						    df.reject(err);
+						}); // client.on('error')
+						
+					return df.promise;
+				}, // checkExistNickname()
 			} // User
 		}; // Service
 		
