@@ -79,10 +79,14 @@ describe("User.signIn", function() {
 			});
 			
 			promise.should.be.rejected.then(function(err) {
-				console.log("user signIn error code => " + err.code);
+				console.log("user signIn user not found error code => " + err.code);
 			});
 	
-			promise.should.be.rejected.and.notify(done);
+			promise.should.be.rejected.and.eventually.deep.equal({
+				success: false,
+				code: 'session_err_0001',
+				message: '',
+				result_data: null}).notify(done);
 		});
 	});
 
@@ -91,8 +95,8 @@ describe("User.signIn", function() {
 			if (err)  throw err;
 			
 			var promise = service.User.signIn({
-				email: "not.confirm@gmail.com",
-				password: "1234!@#$",
+				email: "not.confirmed@mail.com",
+				password: "abcd1234!@#$",
 				device: {
 					key: macAddress,
 					token: '5576d5db636f6441fa0001dd',	// member id
@@ -101,10 +105,14 @@ describe("User.signIn", function() {
 			});
 			
 			promise.should.be.rejected.then(function(err) {
-				console.log("user signIn error => " + JSON.stringify(err));
+				console.log("user signIn not confirmed error code => " + err.code);
 			});
 	
-			promise.should.be.rejected.and.notify(done);
+			promise.should.be.rejected.and.eventually.deep.equal({
+				success: false,
+				code: 'session_err_0002',
+				message: '',
+				result_data: null}).notify(done);
 		});
 	});
 });
