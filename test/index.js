@@ -48,7 +48,7 @@ describe("User.signIn", function() {
 			
 			var promise = service.User.signIn({
 				email: "kwangje2015@gmail.com",
-				password: "Wnl!@#123",
+				password: "1234!@#$",
 				device: {
 					key: macAddress,
 					token: '5576d5db636f6441fa0001dd',	// member id
@@ -57,20 +57,42 @@ describe("User.signIn", function() {
 			});
 			
 			promise.should.be.fulfilled.then(function(data, response) {
-				console.log("user signIn success => " + JSON.stringify(data));
+				console.log("user signIn success code => " + data.code);
 			});
 	
 			promise.should.be.fulfilled.and.notify(done);
 		});
 	});
 
-	it('should be rejected', function(done) {
+	it('should be rejected because of user is not found.', function(done) {
 		require('getmac').getMac(function(err, macAddress){
 			if (err)  throw err;
 			
 			var promise = service.User.signIn({
-				email: "kwangje2015@gmail.com",
-				password: "Wnl!@#1231",
+				email: "unknown@gmail.com",
+				password: "1234!@#$",
+				device: {
+					key: macAddress,
+					token: '5576d5db636f6441fa0001dd',	// member id
+					platform: 'desktop'					// application platform
+				}
+			});
+			
+			promise.should.be.rejected.then(function(err) {
+				console.log("user signIn error code => " + err.code);
+			});
+	
+			promise.should.be.rejected.and.notify(done);
+		});
+	});
+
+	it('should be rejected because of user is not confirmed.', function(done) {
+		require('getmac').getMac(function(err, macAddress){
+			if (err)  throw err;
+			
+			var promise = service.User.signIn({
+				email: "not.confirm@gmail.com",
+				password: "1234!@#$",
 				device: {
 					key: macAddress,
 					token: '5576d5db636f6441fa0001dd',	// member id
