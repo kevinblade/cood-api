@@ -115,4 +115,30 @@ describe("User.signIn", function() {
 				result_data: null}).notify(done);
 		});
 	});
+
+	it('should be rejected because of user is not confirmed.', function(done) {
+		require('getmac').getMac(function(err, macAddress){
+			if (err)  throw err;
+			
+			var promise = service.User.signIn({
+				email: "unknown@gmail.com",
+				password: "1234!@#$123",
+				device: {
+					key: macAddress,
+					token: '5576d5db636f6441fa0001dd',	// member id
+					platform: 'desktop'					// application platform
+				}
+			});
+			
+			promise.should.be.rejected.then(function(err) {
+				console.log("user signIn password incorrect error code => " + err.code);
+			});
+	
+			promise.should.be.rejected.and.eventually.deep.equal({
+				success: false,
+				code: 'session_err_0003',
+				message: '',
+				result_data: null}).notify(done);
+		});
+	});
 });
