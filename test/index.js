@@ -37,7 +37,7 @@ describe("OAuth2.getToken", function() {
 			console.log("oauth2 getToken error => " + JSON.stringify(err));
 		});
 
-		promise.should.be.rejected.and.notify(done);
+		promise.should.be.rejected.and.eventually.have.property('error').notify(done);
 	});
 });
 
@@ -60,7 +60,10 @@ describe("User.signIn", function() {
 				console.log("user signIn success code => " + data.code);
 			});
 	
-			promise.should.be.fulfilled.and.notify(done);
+			promise.should.be.fulfilled.and.eventually.include({
+				success: true,
+				code: 'session_succ_0001'
+			}).notify(done);
 		});
 	});
 
@@ -82,11 +85,10 @@ describe("User.signIn", function() {
 				console.log("user signIn user not found error code => " + err.code);
 			});
 	
-			promise.should.be.rejected.and.eventually.deep.equal({
+			promise.should.be.rejected.and.eventually.include({
 				success: false,
-				code: 'session_err_0001',
-				message: '',
-				result_data: null}).notify(done);
+				code: 'session_err_0001'
+			}).notify(done);
 		});
 	});
 
@@ -108,20 +110,19 @@ describe("User.signIn", function() {
 				console.log("user signIn not confirmed error code => " + err.code);
 			});
 	
-			promise.should.be.rejected.and.eventually.deep.equal({
+			promise.should.be.rejected.and.eventually.include({
 				success: false,
-				code: 'session_err_0002',
-				message: '',
-				result_data: null}).notify(done);
+				code: 'session_err_0002'
+			}).notify(done);
 		});
 	});
 
-	it('should be rejected because of user is not confirmed.', function(done) {
+	it('should be rejected because of user password is not correct.', function(done) {
 		require('getmac').getMac(function(err, macAddress){
 			if (err)  throw err;
 			
 			var promise = service.User.signIn({
-				email: "unknown@gmail.com",
+				email: "kwangje2015@gmail.com",
 				password: "1234!@#$123",
 				device: {
 					key: macAddress,
@@ -134,11 +135,106 @@ describe("User.signIn", function() {
 				console.log("user signIn password incorrect error code => " + err.code);
 			});
 	
-			promise.should.be.rejected.and.eventually.deep.equal({
+			promise.should.be.rejected.and.eventually.include({
 				success: false,
-				code: 'session_err_0003',
-				message: '',
-				result_data: null}).notify(done);
+				code: 'session_err_0003'
+			}).notify(done);
 		});
+	});
+});
+
+describe("User.checkExistEmail", function() {
+	it('should be fulfilled', function(done) {
+		var promise = service.User.checkExistEmail({
+			email: "kwangje2015@gmail.com"
+		});
+		
+		promise.should.be.fulfilled.then(function(data, response) {
+			console.log("user checkExistEmail success code => " + data.code);
+		});
+
+		promise.should.be.fulfilled.and.eventually.include({
+			success: true,
+			code: 'user_succ_0006'
+		}).notify(done);
+	});
+
+	it('should be rejected because of user is not found.', function(done) {
+		var promise = service.User.checkExistEmail({
+			email: "unknown@gmail.com"
+		});
+		
+		promise.should.be.rejected.then(function(err) {
+			console.log("user checkExistEmail user not found error code => " + err.code);
+		});
+
+		promise.should.be.rejected.and.eventually.include({
+			success: false,
+			code: 'user_err_0001'
+		}).notify(done);
+	});
+});
+
+describe("User.checkExistNickname", function() {
+	it('should be fulfilled', function(done) {
+		var promise = service.User.checkExistNickname({
+			nickname: "케빈2"
+		});
+		
+		promise.should.be.fulfilled.then(function(data, response) {
+			console.log("user checkExistNickname success code => " + data.code);
+		});
+
+		promise.should.be.fulfilled.and.eventually.include({
+			success: true,
+			code: 'user_succ_0007'
+		}).notify(done);
+	});
+
+	it('should be rejected because of user is not found.', function(done) {
+		var promise = service.User.checkExistNickname({
+			nickname: "unknown"
+		});
+		
+		promise.should.be.rejected.then(function(err) {
+			console.log("user checkExistNickname user not found error code => " + err.code);
+		});
+
+		promise.should.be.rejected.and.eventually.include({
+			success: false,
+			code: 'user_err_0002'
+		}).notify(done);
+	});
+});
+
+describe("User.findUserByID", function() {
+	it('should be fulfilled', function(done) {
+		var promise = service.User.findUserByID({
+			user_id: "556b1053636f6477fc010000"
+		});
+		
+		promise.should.be.fulfilled.then(function(data, response) {
+			console.log("User findUserByID success code => " + data.code);
+		});
+		
+		promise.should.be.fulfilled.and.eventually.include({
+			success: true,
+			code: 'user_succ_0010'
+		}).notify(done);
+	});
+	
+	it('should be rejected because of illegal id.', function(done) {
+		var promise = service.User.findUserByID({
+			user_id: ""
+		});
+		
+		promise.should.be.rejected.then(function(data, response) {
+			console.log("User findUserByID success code => " + data.code);
+		});
+		
+		promise.should.be.rejected.and.eventually.include({
+			success: false,
+			code: 'user_err_0007'
+		}).notify(done);
 	});
 });

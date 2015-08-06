@@ -7,6 +7,23 @@ var	Client = require('node-rest-client').Client,
 module.exports = {
 	Service: function(apiOpts) {
 		var Service = {
+			Utils: {
+				createApiParams: function(args) {
+					return {
+						data: args ? JSON.stringify(args) : '',
+						type: "text",
+						xhrFields: {
+							withCredentials: true
+						},
+						headers:{
+							"Content-Type": "application/json; charset=utf-8",
+							'Authorization': 'Bearer ' + Service.OAuth2.accessToken,
+							'Accept': 'application/vnd.coddr.v1'
+						}
+					};
+				}
+			},
+			
 			// ----------------------------------------------------------
 			// OAuth2 singleton object
 			// ----------------------------------------------------------
@@ -64,29 +81,18 @@ module.exports = {
 			User: {
 				signUp: function(opts) {
 					var self = this,	// this is User
-						args = {
-							data: JSON.stringify({
-								user: {
-									email: opts.email,
-									firstname: opts.firstname,
-									lastname: opts.lastname,
-									nickname: opts.nickname,
-									password: opts.password,
-									password_confirmation: opts.passwordConfirmation,
-									deivce: opts.device,
-									invite_id: opts.invite_id || ''
-								}
-							}),
-							type: "text",
-							xhrFields: {
-								withCredentials: true
-							},
-							headers:{
-								"Content-Type": "application/json; charset=utf-8",
-								'Authorization': 'Bearer ' + Service.OAuth2.accessToken,
-	                			'Accept': 'application/vnd.coddr.v1'
-	            			}
-						}; // args
+						args = Service.Utils.createApiParams({
+							user: {
+								email: opts.email,
+								firstname: opts.firstname,
+								lastname: opts.lastname,
+								nickname: opts.nickname,
+								password: opts.password,
+								password_confirmation: opts.passwordConfirmation,
+								deivce: opts.device,
+								invite_id: opts.invite_id || ''
+							}
+						});
 
 					var df = deferred();
 
@@ -111,24 +117,13 @@ module.exports = {
 				
 				signIn: function(opts) {
 					var self = this,
-						args = {
-							data: JSON.stringify({
-								api_user: {
-									email: opts.email,
-									password: opts.password,
-									device: opts.device
-								}
-							}),
-							type: "text",
-							xhrFields: {
-								withCredentials: true
-							},
-							headers:{
-								"Content-Type": "application/json; charset=utf-8",
-								'Authorization': 'Bearer ' + Service.OAuth2.accessToken,
-	                			'Accept': 'application/vnd.coddr.v1'
-	            			}
-						}; // args
+						args = Service.Utils.createApiParams({
+							api_user: {
+								email: opts.email,
+								password: opts.password,
+								device: opts.device
+							}
+						});
 					
 					var df = deferred();
 					
@@ -153,14 +148,12 @@ module.exports = {
 				
 				checkExistEmail: function(opts) {
 					var self = this,
-						args = {
-							data: {
-								api_user: {
-									email: opts.email
-								}
+						args = Service.Utils.createApiParams({
+							api_user: {
+								email: opts.email
 							}
-						}; // args
-						
+						});
+
 					var df = deferred();
 					
 					client.post(apiOpts.apiUrl + '/api/users/check_exist_email.json', args,
@@ -184,14 +177,12 @@ module.exports = {
 				
 				checkExistNickname: function(opts) {
 					var self = this,
-						args = {
-							data: {
-								api_user: {
-									nickname: opts.nickname
-								}
+						args = Service.Utils.createApiParams({
+							api_user: {
+								nickname: opts.nickname
 							}
-						}; // args
-						
+						});
+
 					var df = deferred();
 					
 					client.post(apiOpts.apiUrl + '/api/users/check_exist_nickname.json', args,
@@ -212,7 +203,88 @@ module.exports = {
 						
 					return df.promise;
 				}, // checkExistNickname()
-			} // User
+				
+				findUserByID: function(opts) {
+					var self = this,
+						args = Service.Utils.createApiParams();
+						
+					var df = deferred();
+					
+					client.get(apiOpts.apiUrl + '/api/users/find/_id/' + (opts.user_id || 'abcd') + '.json', args,
+						function(data, response) {
+							data = JSON.parse(data);
+							
+							if (data.success) {
+								df.resolve(data);
+							} else {
+								df.reject(data);
+							}
+						}); // client.get
+						
+					client.on('error',
+						function(err) {
+							df.reject(err);
+						}); // client.on('error')
+					
+					return df.promise;
+				}, // findUserByID
+			}, // User
+			
+			Post: {
+				getPost: function(opts) {
+					
+				},
+				
+				getPrevRoomPosts: function(opts) {
+					
+				},
+				
+				getNextRoomPosts: function(opts) {
+					
+				},
+				
+				getLatestRoomPosts: function(opts) {
+					
+				},
+				
+				getPrevDirectPosts: function(opts) {
+					
+				},
+				
+				getNextDirectPosts: function(opts) {
+					
+				},
+				
+				getLatestDirectPosts: function(opts) {
+					
+				},
+				
+				searchPostsByQuery: function(opts) {
+					
+				}
+			}, // Post
+			
+			Room: {
+				getRoomByHostname: function(opts) {
+					
+				},
+				
+				getJoinedRoomsByMember: function(opts) {
+					
+				},
+				
+				updateJoinedRoom: function(otps) {
+					
+				},
+				
+				updateLastRead: function(opts) {
+					
+				},
+				
+				checkExistRoom: function(opts) {
+					
+				}
+			}, // Room
 		}; // Service
 		
 		return Service;
